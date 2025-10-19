@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://cwe3k2cuxjaam"]
+
+[ext_resource type="PackedScene" uid="uid://bqwtk8ci384dq" path="res://assets/PolygonApocalypse/Scenes/Demo_City_Standard_RenderPipeline.scn" id="1_kycxd"]
+[ext_resource type="PackedScene" uid="uid://c810v06jrhceq" path="res://Scenes/Player/Player.tscn" id="2_pa6j6"]
+
+[node name="World" type="Node3D"]
+
+[node name="World" parent="." instance=ExtResource("1_kycxd")]
+
+[node name="Player" parent="." instance=ExtResource("2_pa6j6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -8.001903)

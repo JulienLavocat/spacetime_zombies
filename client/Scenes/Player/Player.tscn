@@ -1,0 +1,20 @@
+[gd_scene load_steps=3 format=3 uid="uid://c810v06jrhceq"]
+
+[ext_resource type="Script" uid="uid://dfv7xb7w3fhmj" path="res://Scenes/Player/Player.cs" id="1_wr5hl"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_wr5hl"]
+radius = 0.25
+height = 1.5575714
+
+[node name="Player" type="CharacterBody3D"]
+script = ExtResource("1_wr5hl")
+
+[node name="Collider" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.7907074, 0)
+shape = SubResource("CapsuleShape3D_wr5hl")
+
+[node name="Head" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.445972, 0)
+
+[node name="Camera" type="Camera3D" parent="Head"]
+current = true
