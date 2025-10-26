@@ -3,11 +3,11 @@ name = "spacetime-module"
 version = "0.1.0"
 edition = "2021"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [lib]
 crate-type = ["cdylib"]
 
 [dependencies]
-spacetimedb = "1.5"
+spacetimedb = "1.6.0"
 log = "0.4"
+spacetime_engine = { path = "../../../dev/stdb/spacetime_engine/engine" }
+landmass = { path = "../../../dev/landmass/crates/landmass" }
