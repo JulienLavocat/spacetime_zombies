@@ -1,2 +1,0 @@
-server:
-    spacetime publish zombies -s local -c -y

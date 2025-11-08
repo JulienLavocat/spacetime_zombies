@@ -1,8 +1,8 @@
 using Godot;
+using SpacetimeDB.Types;
 
 public partial class Player : CharacterBody3D
 {
-
     private readonly float WalkSpeed = 5.0f;
     private readonly float SprintSpeed = 10.0f;
     private readonly float JumpVelocity = 4.5f;
@@ -14,9 +14,15 @@ public partial class Player : CharacterBody3D
     private readonly float BaseFOV = 80.0f;
     private readonly float FOVSprintMultiplier = 1.1f;
 
+    [Export]
+    public Stdb stdb;
+
     private Node3D head;
     private Camera3D camera;
     private float bobTimer = 0.0f;
+    private float lastPositionUpdateTime = 0.0f;
+    private Vector3 lastSentPosition = Vector3.Zero;
+
 
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
@@ -90,7 +96,21 @@ public partial class Player : CharacterBody3D
 
         bobTimer += (float)delta * velocity.Length() * (IsOnFloor() ? 1 : 0);
         camera.Position = Headbob(bobTimer);
+    }
 
+    public override void _Process(double delta)
+    {
+        if (!stdb.IsActive)
+        {
+            return;
+        }
+
+        lastPositionUpdateTime += (float)delta;
+        if (lastPositionUpdateTime >= 0.1f && GlobalPosition.DistanceSquaredTo(lastSentPosition) > 0.01f)
+        {
+            stdb.Reducers().PlayerUpdatePosition(new Vec3(GlobalPosition.X, GlobalPosition.Y, GlobalPosition.Z));
+            lastPositionUpdateTime = 0.0f;
+        }
     }
 
     private Vector3 Headbob(float time)
