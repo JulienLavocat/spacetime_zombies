@@ -12,17 +12,17 @@ namespace SpacetimeDB.Types
 {
     public sealed partial class RemoteReducers : RemoteBase
     {
-        public delegate void TickZombieHandler(ReducerEventContext ctx, ZombieUpdateTick tick);
-        public event TickZombieHandler? OnTickZombie;
+        public delegate void DummyHandler(ReducerEventContext ctx, ExternalNavMesh en);
+        public event DummyHandler? OnDummy;
 
-        public void TickZombie(ZombieUpdateTick tick)
+        public void Dummy(ExternalNavMesh en)
         {
-            conn.InternalCallReducer(new Reducer.TickZombie(tick), this.SetCallReducerFlags.TickZombieFlags);
+            conn.InternalCallReducer(new Reducer.Dummy(en), this.SetCallReducerFlags.DummyFlags);
         }
 
-        public bool InvokeTickZombie(ReducerEventContext ctx, Reducer.TickZombie args)
+        public bool InvokeDummy(ReducerEventContext ctx, Reducer.Dummy args)
         {
-            if (OnTickZombie == null)
+            if (OnDummy == null)
             {
                 if (InternalOnUnhandledReducerError != null)
                 {
@@ -34,9 +34,9 @@ namespace SpacetimeDB.Types
                 }
                 return false;
             }
-            OnTickZombie(
+            OnDummy(
                 ctx,
-                args.Tick
+                args.En
             );
             return true;
         }
@@ -46,28 +46,28 @@ namespace SpacetimeDB.Types
     {
         [SpacetimeDB.Type]
         [DataContract]
-        public sealed partial class TickZombie : Reducer, IReducerArgs
+        public sealed partial class Dummy : Reducer, IReducerArgs
         {
-            [DataMember(Name = "tick")]
-            public ZombieUpdateTick Tick;
+            [DataMember(Name = "_en")]
+            public ExternalNavMesh En;
 
-            public TickZombie(ZombieUpdateTick Tick)
+            public Dummy(ExternalNavMesh En)
             {
-                this.Tick = Tick;
+                this.En = En;
             }
 
-            public TickZombie()
+            public Dummy()
             {
-                this.Tick = new();
+                this.En = new();
             }
 
-            string IReducerArgs.ReducerName => "tick_zombie";
+            string IReducerArgs.ReducerName => "dummy";
         }
     }
 
     public sealed partial class SetReducerFlags
     {
-        internal CallReducerFlags TickZombieFlags;
-        public void TickZombie(CallReducerFlags flags) => TickZombieFlags = flags;
+        internal CallReducerFlags DummyFlags;
+        public void Dummy(CallReducerFlags flags) => DummyFlags = flags;
     }
 }

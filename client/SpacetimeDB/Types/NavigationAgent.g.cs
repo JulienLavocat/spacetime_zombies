@@ -21,8 +21,6 @@ namespace SpacetimeDB.Types
         public ulong? ExternalId;
         [DataMember(Name = "position")]
         public Vec3 Position;
-        [DataMember(Name = "previous_position")]
-        public Vec3 PreviousPosition;
         [DataMember(Name = "velocity")]
         public Vec3 Velocity;
         [DataMember(Name = "current_target")]
@@ -45,7 +43,6 @@ namespace SpacetimeDB.Types
             ulong WorldId,
             ulong? ExternalId,
             Vec3 Position,
-            Vec3 PreviousPosition,
             Vec3 Velocity,
             Vec3? CurrentTarget,
             AgentState State,
@@ -60,7 +57,6 @@ namespace SpacetimeDB.Types
             this.WorldId = WorldId;
             this.ExternalId = ExternalId;
             this.Position = Position;
-            this.PreviousPosition = PreviousPosition;
             this.Velocity = Velocity;
             this.CurrentTarget = CurrentTarget;
             this.State = State;
@@ -74,7 +70,6 @@ namespace SpacetimeDB.Types
         public NavigationAgent()
         {
             this.Position = new();
-            this.PreviousPosition = new();
             this.Velocity = new();
             this.TargetReachedCondition = null!;
         }

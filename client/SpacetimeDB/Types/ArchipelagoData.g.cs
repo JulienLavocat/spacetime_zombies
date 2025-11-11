@@ -11,37 +11,28 @@ namespace SpacetimeDB.Types
 {
     [SpacetimeDB.Type]
     [DataContract]
-    public sealed partial class NavMesh
+    public sealed partial class ArchipelagoData
     {
         [DataMember(Name = "id")]
         public ulong Id;
         [DataMember(Name = "world_id")]
         public ulong WorldId;
-        [DataMember(Name = "translation")]
-        public Vec3 Translation;
-        [DataMember(Name = "rotation")]
-        public float Rotation;
         [DataMember(Name = "data")]
         public System.Collections.Generic.List<byte> Data;
 
-        public NavMesh(
+        public ArchipelagoData(
             ulong Id,
             ulong WorldId,
-            Vec3 Translation,
-            float Rotation,
             System.Collections.Generic.List<byte> Data
         )
         {
             this.Id = Id;
             this.WorldId = WorldId;
-            this.Translation = Translation;
-            this.Rotation = Rotation;
             this.Data = Data;
         }
 
-        public NavMesh()
+        public ArchipelagoData()
         {
-            this.Translation = new();
             this.Data = new();
         }
     }

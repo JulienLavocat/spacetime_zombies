@@ -13,15 +13,15 @@ namespace SpacetimeDB.Types
 {
     public sealed partial class RemoteTables
     {
-        public sealed class StengNavMeshHandle : RemoteTableHandle<EventContext, NavMesh>
+        public sealed class StengNavmeshHandle : RemoteTableHandle<EventContext, NavMesh>
         {
-            protected override string RemoteTableName => "steng_nav_mesh";
+            protected override string RemoteTableName => "steng_navmesh";
 
             public sealed class IdUniqueIndex : UniqueIndexBase<ulong>
             {
                 protected override ulong GetKey(NavMesh row) => row.Id;
 
-                public IdUniqueIndex(StengNavMeshHandle table) : base(table) { }
+                public IdUniqueIndex(StengNavmeshHandle table) : base(table) { }
             }
 
             public readonly IdUniqueIndex Id;
@@ -30,12 +30,12 @@ namespace SpacetimeDB.Types
             {
                 protected override ulong GetKey(NavMesh row) => row.WorldId;
 
-                public WorldIdIndex(StengNavMeshHandle table) : base(table) { }
+                public WorldIdIndex(StengNavmeshHandle table) : base(table) { }
             }
 
             public readonly WorldIdIndex WorldId;
 
-            internal StengNavMeshHandle(DbConnection conn) : base(conn)
+            internal StengNavmeshHandle(DbConnection conn) : base(conn)
             {
                 Id = new(this);
                 WorldId = new(this);
@@ -44,6 +44,6 @@ namespace SpacetimeDB.Types
             protected override object GetPrimaryKey(NavMesh row) => row.Id;
         }
 
-        public readonly StengNavMeshHandle StengNavMesh;
+        public readonly StengNavmeshHandle StengNavmesh;
     }
 }

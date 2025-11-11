@@ -19,20 +19,28 @@ namespace SpacetimeDB.Types
         public ulong NavigationAgentId;
         [DataMember(Name = "position")]
         public Vec3 Position;
-        [DataMember(Name = "spawned_at")]
-        public SpacetimeDB.Timestamp SpawnedAt;
+        [DataMember(Name = "target_player")]
+        public ulong? TargetPlayer;
+        [DataMember(Name = "is_attacking")]
+        public bool IsAttacking;
+        [DataMember(Name = "next_attack_time")]
+        public SpacetimeDB.Timestamp NextAttackTime;
 
         public Zombie(
             ulong Id,
             ulong NavigationAgentId,
             Vec3 Position,
-            SpacetimeDB.Timestamp SpawnedAt
+            ulong? TargetPlayer,
+            bool IsAttacking,
+            SpacetimeDB.Timestamp NextAttackTime
         )
         {
             this.Id = Id;
             this.NavigationAgentId = NavigationAgentId;
             this.Position = Position;
-            this.SpawnedAt = SpawnedAt;
+            this.TargetPlayer = TargetPlayer;
+            this.IsAttacking = IsAttacking;
+            this.NextAttackTime = NextAttackTime;
         }
 
         public Zombie()

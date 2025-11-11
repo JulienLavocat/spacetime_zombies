@@ -42,6 +42,21 @@ public partial class Player : CharacterBody3D
             rotation.X = Mathf.Clamp(rotation.X, -90, 90);
             camera.RotationDegrees = rotation;
         }
+
+        if (@event is InputEventKey keyEvent)
+        {
+            if (keyEvent.IsPressed() && keyEvent.Keycode == Key.Escape)
+            {
+                if (Input.GetMouseMode() == Input.MouseModeEnum.Captured)
+                {
+                    Input.SetMouseMode(Input.MouseModeEnum.Visible);
+                }
+                else
+                {
+                    Input.SetMouseMode(Input.MouseModeEnum.Captured);
+                }
+            }
+        }
     }
 
     public override void _PhysicsProcess(double delta)

@@ -12,12 +12,12 @@ namespace SpacetimeDB.Types
 {
     public sealed partial class RemoteReducers : RemoteBase
     {
-        public delegate void EditorUploadNavmeshHandler(ReducerEventContext ctx);
+        public delegate void EditorUploadNavmeshHandler(ReducerEventContext ctx, ulong worldId);
         public event EditorUploadNavmeshHandler? OnEditorUploadNavmesh;
 
-        public void EditorUploadNavmesh()
+        public void EditorUploadNavmesh(ulong worldId)
         {
-            conn.InternalCallReducer(new Reducer.EditorUploadNavmesh(), this.SetCallReducerFlags.EditorUploadNavmeshFlags);
+            conn.InternalCallReducer(new Reducer.EditorUploadNavmesh(worldId), this.SetCallReducerFlags.EditorUploadNavmeshFlags);
         }
 
         public bool InvokeEditorUploadNavmesh(ReducerEventContext ctx, Reducer.EditorUploadNavmesh args)
@@ -35,7 +35,8 @@ namespace SpacetimeDB.Types
                 return false;
             }
             OnEditorUploadNavmesh(
-                ctx
+                ctx,
+                args.WorldId
             );
             return true;
         }
@@ -47,6 +48,18 @@ namespace SpacetimeDB.Types
         [DataContract]
         public sealed partial class EditorUploadNavmesh : Reducer, IReducerArgs
         {
+            [DataMember(Name = "world_id")]
+            public ulong WorldId;
+
+            public EditorUploadNavmesh(ulong WorldId)
+            {
+                this.WorldId = WorldId;
+            }
+
+            public EditorUploadNavmesh()
+            {
+            }
+
             string IReducerArgs.ReducerName => "editor_upload_navmesh";
         }
     }

@@ -15,7 +15,9 @@ pub struct Zombie {
     pub id: NavigationAgentId,
     pub navigation_agent_id: u64,
     pub position: Vec3,
-    pub spawned_at: Timestamp,
+    pub target_player: Option<u64>,
+    pub is_attacking: bool,
+    pub next_attack_time: Timestamp,
 }
 
 impl Entity for Zombie {
@@ -25,6 +27,10 @@ impl Entity for Zombie {
 
     fn find(ctx: &ReducerContext, id: u64) -> Option<Self> {
         ctx.db.zombie().id().find(id)
+    }
+
+    fn iter(ctx: &ReducerContext) -> impl Iterator<Item = Self> {
+        ctx.db.zombie().iter()
     }
 
     fn as_map(ctx: &ReducerContext) -> HashMap<u64, Self> {
@@ -64,7 +70,7 @@ impl Zombie {
             .desired_speed(3.0)
             .max_speed(5.0)
             .radius(0.3)
-            .target_reached_condition(TargetReachedCondition::Distance(None))
+            .target_reached_condition(TargetReachedCondition::Distance(Some(1.5)))
             .position(position)
             .build()
             .insert(ctx)
@@ -73,15 +79,11 @@ impl Zombie {
         Zombie {
             id: 0,
             navigation_agent_id,
+            target_player: None,
             position,
-            spawned_at: ctx.timestamp,
+            is_attacking: false,
+            next_attack_time: ctx.timestamp, // We could make it an option but its fine like this
         }
         .insert(ctx)
-    }
-
-    pub fn update_target(&self, ctx: &ReducerContext, target: Option<Vec3>) {
-        let mut agent = NavigationAgent::find(ctx, self.navigation_agent_id).unwrap();
-        agent.current_target = target;
-        agent.update(ctx);
     }
 }

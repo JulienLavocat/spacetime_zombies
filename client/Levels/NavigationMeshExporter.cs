@@ -39,15 +39,13 @@ public partial class NavigationMeshExporter : NavigationRegion3D
             polygons.Add(list);
         }
 
-        var navmesh = new NavMesh
+        var navmesh = new ExternalNavMesh
         {
-            Id = 0,
             PolygonTypeIndices = Enumerable.Repeat(0ul, polygons.Count).ToList(),
             Rotation = 0f,
             Translation = new Vec3(0, 0, 0),
             Vertices = verts,
             Polygons = polygons,
-            WorldId = 1,
         };
 
 

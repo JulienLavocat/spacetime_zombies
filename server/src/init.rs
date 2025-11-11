@@ -1,20 +1,27 @@
 use log::info;
 use spacetime_engine::{
     math::Vec3,
-    navigation::{convert_godot_navmesh_to_landmass, steng_nav_mesh, NavMesh},
+    navigation::{import_external_navmesh, ExternalNavMesh},
+    utils::Entity,
     world::World,
 };
-use spacetimedb::{reducer, ReducerContext, Table};
+use spacetimedb::{reducer, ReducerContext};
 
 use crate::{
     world::WorldTick,
     zombies_spawner::{ZombieSpawnPoint, ZombieSpawnTick},
-    zombies_tick::ZombieUpdateTick,
+    zombies_tick::{create_zombie_behavior_tree, ZombieUpdateTick},
 };
 
 #[reducer(init)]
 pub fn init(ctx: &ReducerContext) {
-    World::builder().build().insert(ctx);
+    World::builder()
+        .debug(true)
+        .debug_navigation(false)
+        .build()
+        .insert(ctx);
+
+    create_zombie_behavior_tree(ctx);
 
     WorldTick::schedule(ctx);
     ZombieUpdateTick::schedule(ctx);
@@ -27,34 +34,29 @@ pub fn init(ctx: &ReducerContext) {
 }
 
 #[reducer]
-fn editor_upload_navmesh(ctx: &ReducerContext) {
+fn editor_upload_navmesh(ctx: &ReducerContext, world_id: u64) {
     let file = include_str!("../../client/navmesh_export.json");
     info!("navmesh export file size: {} bytes", file.len());
-    let original_navmesh =
-        serde_json::from_str::<NavMesh>(file).expect("Failed to parse navmesh JSON");
+    let navmesh =
+        serde_json::from_str::<ExternalNavMesh>(file).expect("Failed to parse navmesh JSON");
     info!(
         "Parsed navmesh with {} vertices and {} polygons",
-        original_navmesh.vertices.len(),
-        original_navmesh.polygons.len()
+        navmesh.vertices.len(),
+        navmesh.polygons.len()
     );
-
-    let world_id = original_navmesh.world_id;
 
     info!(
         "Uploading navmesh with {} vertices and {} polygons for world {}",
-        original_navmesh.vertices.len(),
-        original_navmesh.polygons.len(),
+        navmesh.vertices.len(),
+        navmesh.polygons.len(),
         world_id
     );
 
-    let converted_navmesh = convert_godot_navmesh_to_landmass(original_navmesh);
+    import_external_navmesh(ctx, world_id, navmesh);
+}
 
-    converted_navmesh
-        .clone()
-        .validate()
-        .expect("Uploaded navmesh is invalid");
-
-    let mut steng_navmesh = NavMesh::from(converted_navmesh);
-    steng_navmesh.world_id = world_id;
-    ctx.db.steng_nav_mesh().insert(steng_navmesh);
+#[reducer]
+fn dummy(_ctx: &ReducerContext, _en: ExternalNavMesh) {
+    // This reducer does nothing, it's just a placeholder to generate
+    // the necessary serialization code for ExternalNavMesh.
 }

@@ -24,6 +24,10 @@ impl Entity for Player {
         ctx.db.player().id().find(id)
     }
 
+    fn iter(ctx: &ReducerContext) -> impl Iterator<Item = Self> {
+        ctx.db.player().iter()
+    }
+
     fn as_map(ctx: &ReducerContext) -> HashMap<u64, Self> {
         ctx.db
             .player()

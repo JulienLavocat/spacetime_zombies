@@ -15,20 +15,24 @@ namespace SpacetimeDB.Types
     {
         [DataMember(Name = "id")]
         public ulong Id;
-        [DataMember(Name = "navigation_substeps")]
-        public ushort NavigationSubsteps;
         [DataMember(Name = "debug")]
         public bool Debug;
+        [DataMember(Name = "debug_navigation")]
+        public bool DebugNavigation;
+        [DataMember(Name = "debug_sample_rate")]
+        public float DebugSampleRate;
 
         public World(
             ulong Id,
-            ushort NavigationSubsteps,
-            bool Debug
+            bool Debug,
+            bool DebugNavigation,
+            float DebugSampleRate
         )
         {
             this.Id = Id;
-            this.NavigationSubsteps = NavigationSubsteps;
             this.Debug = Debug;
+            this.DebugNavigation = DebugNavigation;
+            this.DebugSampleRate = DebugSampleRate;
         }
 
         public World()

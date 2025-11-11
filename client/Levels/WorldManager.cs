@@ -27,6 +27,7 @@ public partial class WorldManager : Node3D
             if (zombies.TryGetValue(oldZombie.Id, out var node))
             {
                 node.SetTargetPosition(new Vector3(newZombie.Position.X, newZombie.Position.Y, newZombie.Position.Z));
+                node.SetAttacking(newZombie.IsAttacking);
             }
         };
 
