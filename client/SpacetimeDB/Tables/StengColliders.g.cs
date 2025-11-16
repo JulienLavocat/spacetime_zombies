@@ -13,37 +13,37 @@ namespace SpacetimeDB.Types
 {
     public sealed partial class RemoteTables
     {
-        public sealed class StengArchipelagoDataHandle : RemoteTableHandle<EventContext, ArchipelagoData>
+        public sealed class StengCollidersHandle : RemoteTableHandle<EventContext, Collider>
         {
-            protected override string RemoteTableName => "steng_archipelago_data";
+            protected override string RemoteTableName => "steng_colliders";
 
             public sealed class IdUniqueIndex : UniqueIndexBase<ulong>
             {
-                protected override ulong GetKey(ArchipelagoData row) => row.Id;
+                protected override ulong GetKey(Collider row) => row.Id;
 
-                public IdUniqueIndex(StengArchipelagoDataHandle table) : base(table) { }
+                public IdUniqueIndex(StengCollidersHandle table) : base(table) { }
             }
 
             public readonly IdUniqueIndex Id;
 
             public sealed class WorldIdIndex : BTreeIndexBase<ulong>
             {
-                protected override ulong GetKey(ArchipelagoData row) => row.WorldId;
+                protected override ulong GetKey(Collider row) => row.WorldId;
 
-                public WorldIdIndex(StengArchipelagoDataHandle table) : base(table) { }
+                public WorldIdIndex(StengCollidersHandle table) : base(table) { }
             }
 
             public readonly WorldIdIndex WorldId;
 
-            internal StengArchipelagoDataHandle(DbConnection conn) : base(conn)
+            internal StengCollidersHandle(DbConnection conn) : base(conn)
             {
                 Id = new(this);
                 WorldId = new(this);
             }
 
-            protected override object GetPrimaryKey(ArchipelagoData row) => row.Id;
+            protected override object GetPrimaryKey(Collider row) => row.Id;
         }
 
-        public readonly StengArchipelagoDataHandle StengArchipelagoData;
+        public readonly StengCollidersHandle StengColliders;
     }
 }

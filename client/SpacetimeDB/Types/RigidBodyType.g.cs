@@ -8,16 +8,10 @@ using System;
 namespace SpacetimeDB.Types
 {
     [SpacetimeDB.Type]
-    public enum AgentState
+    public enum RigidBodyType
     {
-        Idle,
-        ReachedTarget,
-        ReachedAnimationLink,
-        UsingAnimationLink,
-        Moving,
-        AgentNotOnNavMesh,
-        TargetNotOnNavMesh,
-        NoPath,
-        Paused,
+        Static,
+        Dynamic,
+        Kinematic,
     }
 }

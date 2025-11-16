@@ -1,10 +1,7 @@
+use crate::constants::WORLD_ID;
 use serde::{Deserialize, Serialize};
 use spacetime_engine::{
-    behavior::{
-        tick_behavior,
-        Behavior::{Action, Select, Sequence},
-        BehaviorExecutor, BehaviorTree, Status,
-    },
+    behavior::{tick_behavior, Action, BehaviorExecutor, BehaviorTree, Select, Sequence, Status},
     navigation::{NavigationAgent, NavigationState},
     utils::{Entity, WorldEntity},
     world::World,
@@ -13,10 +10,7 @@ use spacetimedb::{
     rand::seq::SliceRandom, reducer, table, ReducerContext, ScheduleAt, Table, TimeDuration,
 };
 
-use crate::{
-    tables::{player::Player, zombie::Zombie},
-    world::WORLD_ID,
-};
+use crate::tables::{player::Player, zombie::Zombie};
 
 #[derive(Serialize, Deserialize)]
 pub enum ZombieAction {
@@ -88,13 +82,12 @@ impl BehaviorExecutor<ZombieAction> for Zombie {
 
                 let player = player.unwrap();
 
-                if player.position.distance(&agent.position) > 5.0 {
+                if player.position.distance(&agent.position) > 1.0 {
                     self.is_attacking = false;
                     self.clone().update(ctx);
                     return Status::Failure;
                 }
 
-                log::info!("Zombie {} attacks Player {}", self.id, player.id);
                 self.is_attacking = true;
                 self.next_attack_time = ctx.timestamp + TimeDuration::from_micros(1_000_000);
                 self.clone().update(ctx);

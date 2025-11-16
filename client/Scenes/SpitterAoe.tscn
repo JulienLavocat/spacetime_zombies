@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3 uid="uid://hempouyaafnc"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_txgjy"]
+transparency = 1
+albedo_color = Color(0, 0.49803922, 0, 0.50980395)
+
+[sub_resource type="SphereMesh" id="SphereMesh_txgjy"]
+material = SubResource("StandardMaterial3D_txgjy")
+radius = 3.0
+height = 6.0
+
+[node name="SpitterAoe" type="MeshInstance3D"]
+mesh = SubResource("SphereMesh_txgjy")

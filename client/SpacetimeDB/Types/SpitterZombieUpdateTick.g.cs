@@ -11,29 +11,25 @@ namespace SpacetimeDB.Types
 {
     [SpacetimeDB.Type]
     [DataContract]
-    public sealed partial class ArchipelagoData
+    public sealed partial class SpitterZombieUpdateTick
     {
         [DataMember(Name = "id")]
         public ulong Id;
-        [DataMember(Name = "world_id")]
-        public ulong WorldId;
-        [DataMember(Name = "data")]
-        public System.Collections.Generic.List<byte> Data;
+        [DataMember(Name = "scheduled_at")]
+        public SpacetimeDB.ScheduleAt ScheduledAt;
 
-        public ArchipelagoData(
+        public SpitterZombieUpdateTick(
             ulong Id,
-            ulong WorldId,
-            System.Collections.Generic.List<byte> Data
+            SpacetimeDB.ScheduleAt ScheduledAt
         )
         {
             this.Id = Id;
-            this.WorldId = WorldId;
-            this.Data = Data;
+            this.ScheduledAt = ScheduledAt;
         }
 
-        public ArchipelagoData()
+        public SpitterZombieUpdateTick()
         {
-            this.Data = new();
+            this.ScheduledAt = null!;
         }
     }
 }

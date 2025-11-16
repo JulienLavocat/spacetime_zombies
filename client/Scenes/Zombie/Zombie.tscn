@@ -1,20 +1,18 @@
 [gd_scene load_steps=4 format=3 uid="uid://djw8dsg4f4p6h"]
 
 [ext_resource type="Script" uid="uid://dfkcr1bhaifa6" path="res://Scenes/Zombie/Zombie.cs" id="1_gn5mu"]
+[ext_resource type="PackedScene" uid="uid://caxpl70r3o7i5" path="res://assets/PolygonApocalypse/Prefabs/Characters/SM_Chr_Zombie_Male_01.prefab.scn" id="2_8sjtv"]
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5pex7"]
-resource_local_to_scene = true
-albedo_color = Color(8.663535e-07, 0.57449764, 0.20730376, 1)
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_8sjtv"]
+height = 1.9042969
+radius = 0.30273438
 
-[sub_resource type="CapsuleMesh" id="CapsuleMesh_5pex7"]
-radius = 0.3
-height = 1.5
-
-[node name="Zombie" type="Node3D" node_paths=PackedStringArray("MeshInstance")]
+[node name="Zombie" type="Node3D"]
 script = ExtResource("1_gn5mu")
-MeshInstance = NodePath("MeshInstance3D")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.7, 0)
-material_override = SubResource("StandardMaterial3D_5pex7")
-mesh = SubResource("CapsuleMesh_5pex7")
+[node name="SM_Chr_Zombie_Male_01" parent="." instance=ExtResource("2_8sjtv")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8915427, 0)
+shape = SubResource("CylinderShape3D_8sjtv")

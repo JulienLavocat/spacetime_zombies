@@ -1,7 +1,13 @@
 use std::collections::HashMap;
 
-use spacetime_engine::{math::Vec3, utils::Entity};
+use spacetime_engine::{
+    collisions::RigidBody,
+    math::Vec3,
+    utils::{Entity, WorldEntity},
+};
 use spacetimedb::{table, Identity, ReducerContext, Table, Timestamp};
+
+use crate::constants::{PLAYER_COLLIDER_ID, WORLD_ID};
 
 #[table(name = player, public)]
 pub struct Player {
@@ -13,6 +19,7 @@ pub struct Player {
     pub joined_at: Timestamp,
     pub name: String,
     pub position: Vec3,
+    pub rigid_body_id: u64,
 }
 
 impl Entity for Player {
@@ -45,6 +52,10 @@ impl Entity for Player {
     }
 
     fn delete(&self, ctx: &ReducerContext) {
+        if let Some(rb) = RigidBody::find(ctx, self.rigid_body_id) {
+            rb.delete(ctx);
+        }
+
         ctx.db.player().id().delete(self.id);
     }
 
@@ -52,5 +63,32 @@ impl Entity for Player {
         for player in ctx.db.player().iter() {
             player.delete(ctx);
         }
+    }
+
+    fn count(ctx: &ReducerContext) -> u64 {
+        ctx.db.player().count()
+    }
+}
+
+impl Player {
+    pub fn create(ctx: &ReducerContext) -> Self {
+        let rb = RigidBody::builder()
+            .world_id(WORLD_ID)
+            .collider_id(PLAYER_COLLIDER_ID)
+            .build()
+            .insert(ctx);
+        Player {
+            id: 0,
+            name: format!("Player-{}", ctx.sender.to_abbreviated_hex()),
+            joined_at: ctx.timestamp,
+            identity: ctx.sender,
+            position: Vec3::new(0.0, 0.0, 0.0),
+            rigid_body_id: rb.id,
+        }
+        .insert(ctx)
+    }
+
+    pub fn find_by_identity(ctx: &ReducerContext, identity: Identity) -> Option<Self> {
+        ctx.db.player().identity().find(identity)
     }
 }

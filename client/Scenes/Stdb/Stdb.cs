@@ -17,6 +17,21 @@ public partial class Stdb : Node
     public delegate void OnZombieDeletedDelegate(SpacetimeDB.Types.Zombie zombie);
     public event OnZombieDeletedDelegate OnZombieDeleted;
 
+    public delegate void OnSpitterZombieInsertedDelegate(SpacetimeDB.Types.SpitterZombie zombie);
+    public event OnSpitterZombieInsertedDelegate OnSpitterZombieInserted;
+
+    public delegate void OnSpitterZombieUpdatedDelegate(SpacetimeDB.Types.SpitterZombie oldZombie, SpacetimeDB.Types.SpitterZombie newZombie);
+    public event OnSpitterZombieUpdatedDelegate OnSpitterZombieUpdated;
+
+    public delegate void OnSpitterZombieDeletedDelegate(SpacetimeDB.Types.SpitterZombie zombie);
+    public event OnSpitterZombieDeletedDelegate OnSpitterZombieDeleted;
+
+    public delegate void OnSpitterAoeInsertedDelegate(SpacetimeDB.Types.SpitterAoE aoe);
+    public event OnSpitterAoeInsertedDelegate OnSpitterAoeInserted;
+
+    public delegate void OnSpitterAoeDeletedDelegate(SpacetimeDB.Types.SpitterAoE aoe);
+    public event OnSpitterAoeDeletedDelegate OnSpitterAoeDeleted;
+
     public override void _Ready()
     {
         _connection = DbConnection.Builder()
@@ -65,6 +80,31 @@ public partial class Stdb : Node
         _connection.Db.Zombie.OnDelete += (ctx, zombie) =>
         {
             OnZombieDeleted?.Invoke(zombie);
+        };
+
+        _connection.Db.SpitterZombie.OnInsert += (ctx, spitterZombie) =>
+        {
+            OnSpitterZombieInserted?.Invoke(spitterZombie);
+        };
+
+        _connection.Db.SpitterZombie.OnUpdate += (ctx, oldSpitterZombie, newSpitterZombie) =>
+        {
+            OnSpitterZombieUpdated?.Invoke(oldSpitterZombie, newSpitterZombie);
+        };
+
+        _connection.Db.SpitterZombie.OnDelete += (ctx, spitterZombie) =>
+        {
+            OnSpitterZombieDeleted?.Invoke(spitterZombie);
+        };
+
+        _connection.Db.SpitterAoe.OnInsert += (ctx, spitterAoe) =>
+        {
+            OnSpitterAoeInserted?.Invoke(spitterAoe);
+        };
+
+        _connection.Db.SpitterAoe.OnDelete += (ctx, spitterAoe) =>
+        {
+            OnSpitterAoeDeleted?.Invoke(spitterAoe);
         };
     }
 

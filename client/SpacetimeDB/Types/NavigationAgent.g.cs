@@ -26,7 +26,7 @@ namespace SpacetimeDB.Types
         [DataMember(Name = "current_target")]
         public Vec3? CurrentTarget;
         [DataMember(Name = "state")]
-        public AgentState State;
+        public NavigationState State;
         [DataMember(Name = "target_reached_condition")]
         public TargetReachedCondition TargetReachedCondition;
         [DataMember(Name = "radius")]
@@ -45,7 +45,7 @@ namespace SpacetimeDB.Types
             Vec3 Position,
             Vec3 Velocity,
             Vec3? CurrentTarget,
-            AgentState State,
+            NavigationState State,
             TargetReachedCondition TargetReachedCondition,
             float Radius,
             float DesiredSpeed,

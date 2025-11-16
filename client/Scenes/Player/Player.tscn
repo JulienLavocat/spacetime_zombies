@@ -4,17 +4,17 @@
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_wr5hl"]
 radius = 0.25
-height = 1.5575714
+height = 1.8
 
 [node name="Player" type="CharacterBody3D"]
 script = ExtResource("1_wr5hl")
 
 [node name="Collider" type="CollisionShape3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.7907074, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
 shape = SubResource("CapsuleShape3D_wr5hl")
 
 [node name="Head" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.445972, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7, 0)
 
 [node name="Camera" type="Camera3D" parent="Head"]
 current = true

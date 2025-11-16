@@ -15,7 +15,7 @@ public partial class Player : CharacterBody3D
     private readonly float FOVSprintMultiplier = 1.1f;
 
     [Export]
-    public Stdb stdb;
+    public Stdb Stdb;
 
     private Node3D head;
     private Camera3D camera;
@@ -115,7 +115,7 @@ public partial class Player : CharacterBody3D
 
     public override void _Process(double delta)
     {
-        if (!stdb.IsActive)
+        if (!Stdb.IsActive)
         {
             return;
         }
@@ -123,7 +123,7 @@ public partial class Player : CharacterBody3D
         lastPositionUpdateTime += (float)delta;
         if (lastPositionUpdateTime >= 0.1f && GlobalPosition.DistanceSquaredTo(lastSentPosition) > 0.01f)
         {
-            stdb.Reducers().PlayerUpdatePosition(new Vec3(GlobalPosition.X, GlobalPosition.Y, GlobalPosition.Z));
+            Stdb.Reducers().PlayerUpdatePosition(new Vec3(GlobalPosition.X, GlobalPosition.Y, GlobalPosition.Z));
             lastPositionUpdateTime = 0.0f;
         }
     }

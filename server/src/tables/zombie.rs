@@ -7,13 +7,16 @@ use spacetime_engine::{
 };
 use spacetimedb::{table, ReducerContext, Table, Timestamp};
 
+pub type ZombieId = u64;
+
 #[table(name = zombie, public)]
 #[derive(Clone)]
 pub struct Zombie {
     #[primary_key]
     #[auto_inc]
-    pub id: NavigationAgentId,
-    pub navigation_agent_id: u64,
+    pub id: ZombieId,
+    #[index(btree)]
+    pub navigation_agent_id: NavigationAgentId,
     pub position: Vec3,
     pub target_player: Option<u64>,
     pub is_attacking: bool,
@@ -61,12 +64,15 @@ impl Entity for Zombie {
             zombie.delete(ctx);
         }
     }
+
+    fn count(ctx: &ReducerContext) -> u64 {
+        ctx.db.zombie().count()
+    }
 }
 
 impl Zombie {
-    pub fn create(ctx: &ReducerContext, position: Vec3, target: Option<Vec3>) -> Self {
+    pub fn create(ctx: &ReducerContext, position: Vec3) -> Self {
         let navigation_agent_id = NavigationAgent::builder()
-            .maybe_current_target(target)
             .desired_speed(3.0)
             .max_speed(5.0)
             .radius(0.3)

@@ -1,9 +1,13 @@
 use spacetime_engine::math::Vec3;
 use spacetimedb::{reducer, table, ReducerContext, ScheduleAt, Table, TimeDuration};
 
-use crate::tables::{
-    player::player,
-    zombie::{zombie, Zombie},
+use crate::{
+    constants::SPITTER_SPAWN_CHANCE,
+    spitter_zombie::SpitterZombie,
+    tables::{
+        player::player,
+        zombie::{zombie, Zombie},
+    },
 };
 
 #[table(name = zombie_spawn_tick, scheduled(spawn_zombies))]
@@ -43,7 +47,7 @@ impl ZombieSpawnPoint {
 pub fn spawn_zombies(ctx: &ReducerContext, _t: ZombieSpawnTick) {
     let zombie_count = ctx.db.zombie().count();
     let player_count = ctx.db.player().count();
-    if zombie_count >= 50 || player_count == 0 {
+    if zombie_count >= 100 || player_count == 0 {
         return;
     }
 
@@ -55,5 +59,9 @@ pub fn spawn_zombies(ctx: &ReducerContext, _t: ZombieSpawnTick) {
 
     let spawn_point = &spawn_points[ctx.random::<usize>() % spawn_points.len()];
 
-    Zombie::create(ctx, spawn_point.position, None);
+    if ctx.random::<f32>() <= SPITTER_SPAWN_CHANCE {
+        SpitterZombie::create(ctx, spawn_point.position);
+    } else {
+        Zombie::create(ctx, spawn_point.position);
+    }
 }

@@ -26,9 +26,19 @@ namespace SpacetimeDB.Types
 
             public readonly IdUniqueIndex Id;
 
+            public sealed class NavigationAgentIdIndex : BTreeIndexBase<ulong>
+            {
+                protected override ulong GetKey(Zombie row) => row.NavigationAgentId;
+
+                public NavigationAgentIdIndex(ZombieHandle table) : base(table) { }
+            }
+
+            public readonly NavigationAgentIdIndex NavigationAgentId;
+
             internal ZombieHandle(DbConnection conn) : base(conn)
             {
                 Id = new(this);
+                NavigationAgentId = new(this);
             }
 
             protected override object GetPrimaryKey(Zombie row) => row.Id;

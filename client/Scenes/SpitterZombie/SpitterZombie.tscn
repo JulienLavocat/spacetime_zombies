@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3 uid="uid://8ca1wjxf0vj2"]
+
+[ext_resource type="PackedScene" uid="uid://w8p0vryr3wex" path="res://assets/PolygonApocalypse/Prefabs/Characters/SM_Chr_Zombie_Male_02.prefab.scn" id="1_2hgbq"]
+[ext_resource type="Script" uid="uid://dfkcr1bhaifa6" path="res://Scenes/Zombie/Zombie.cs" id="1_65fa1"]
+
+[node name="SpitterZombie" type="Node3D"]
+script = ExtResource("1_65fa1")
+
+[node name="SM_Chr_Zombie_Male_02" parent="." instance=ExtResource("1_2hgbq")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 0)

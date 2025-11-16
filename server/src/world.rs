@@ -1,10 +1,11 @@
-use spacetime_engine::utils::Entity;
+use spacetime_engine::{math::Vec3, navigation::Character, utils::Entity};
 use spacetimedb::{reducer, table, ReducerContext, ScheduleAt, Table};
 
-use crate::tables::zombie::zombie;
-
-// We only have one world
-pub const WORLD_ID: u64 = 1;
+use crate::{
+    constants::WORLD_ID,
+    spitter_zombie::SpitterZombie,
+    tables::{player::Player, zombie::Zombie},
+};
 
 #[table(name = world_tick, scheduled(tick_world))]
 pub struct WorldTick {
@@ -25,17 +26,25 @@ impl WorldTick {
 
 #[reducer]
 pub fn tick_world(ctx: &ReducerContext, tick: WorldTick) {
-    spacetime_engine::world::tick_world(
-        ctx,
-        WORLD_ID,
-        tick.scheduled_at,
-        |ctx, _world_id, _dt, agents| {
-            for mut zombie in ctx.db.zombie().iter() {
-                if let Some(agent) = agents.get(&zombie.navigation_agent_id) {
-                    zombie.position = agent.position;
-                    zombie.update(ctx);
-                }
-            }
-        },
-    );
+    let characters = Player::iter(ctx).map(|p| Character {
+        position: p.position,
+        velocity: Vec3::ZERO,
+        radius: 0.5,
+    });
+
+    let agents = spacetime_engine::world::tick_world(ctx, WORLD_ID, tick.scheduled_at, characters);
+
+    for mut zombie in Zombie::iter(ctx) {
+        if let Some(agent) = agents.get(&zombie.navigation_agent_id) {
+            zombie.position = agent.position;
+            zombie.update(ctx);
+        }
+    }
+
+    for mut spitter_zombie in SpitterZombie::iter(ctx) {
+        if let Some(agent) = agents.get(&spitter_zombie.navigation_agent_id) {
+            spitter_zombie.position = agent.position;
+            spitter_zombie.update(ctx);
+        }
+    }
 }

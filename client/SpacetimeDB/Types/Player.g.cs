@@ -23,13 +23,16 @@ namespace SpacetimeDB.Types
         public string Name;
         [DataMember(Name = "position")]
         public Vec3 Position;
+        [DataMember(Name = "rigid_body_id")]
+        public ulong RigidBodyId;
 
         public Player(
             ulong Id,
             SpacetimeDB.Identity Identity,
             SpacetimeDB.Timestamp JoinedAt,
             string Name,
-            Vec3 Position
+            Vec3 Position,
+            ulong RigidBodyId
         )
         {
             this.Id = Id;
@@ -37,6 +40,7 @@ namespace SpacetimeDB.Types
             this.JoinedAt = JoinedAt;
             this.Name = Name;
             this.Position = Position;
+            this.RigidBodyId = RigidBodyId;
         }
 
         public Player()

@@ -3,51 +3,29 @@ using Godot;
 public partial class Zombie : Node3D
 {
     [Export] public float InterpolationTime = 0.1f;
-    [Export] public MeshInstance3D MeshInstance;
 
     private Vector3 startPosition, targetPosition;
     private float elapsed;
     private StandardMaterial3D _mat;
+    private WorldManager _worldManager;
 
-    public override void _Ready()
+    public void SetWorldManager(WorldManager worldManager)
     {
-        if (MeshInstance == null || MeshInstance.Mesh == null)
-        {
-            GD.PushWarning($"{Name}: MeshInstance or Mesh is null.");
-            return;
-        }
-
-        _mat = MeshInstance.MaterialOverride as StandardMaterial3D;
-
-        if (_mat == null)
-        {
-            _mat = new StandardMaterial3D
-            {
-                ResourceLocalToScene = true,
-            };
-            MeshInstance.MaterialOverride = _mat;
-        }
-        else
-        {
-            _mat = (StandardMaterial3D)_mat.Duplicate();
-            _mat.ResourceLocalToScene = true;
-            MeshInstance.MaterialOverride = _mat;
-        }
-
-        _mat.AlbedoColor = Colors.Green;
+        _worldManager = worldManager;
     }
 
-    public void SetTargetPosition(Vector3 position)
+    public void SetZombieState(SpacetimeDB.Types.Zombie state)
     {
         startPosition = Position;
-        targetPosition = position;
+        targetPosition = new Vector3(state.Position.X, state.Position.Y, state.Position.Z);
         elapsed = 0f;
     }
 
-    public void SetAttacking(bool attacking)
+    public void SetSpitterZombieState(SpacetimeDB.Types.SpitterZombie state)
     {
-        if (_mat != null)
-            _mat.AlbedoColor = attacking ? Colors.Red : Colors.Green;
+        startPosition = Position;
+        targetPosition = new Vector3(state.Position.X, state.Position.Y, state.Position.Z);
+        elapsed = 0f;
     }
 
     public override void _Process(double delta)
@@ -56,5 +34,8 @@ public partial class Zombie : Node3D
         float t = Mathf.Clamp(elapsed / InterpolationTime, 0f, 1f);
         float smoothT = t * t * (3f - 2f * t);
         Position = startPosition.Lerp(targetPosition, smoothT);
+        var playerPos = _worldManager.GetPlayerPosition();
+        playerPos.Y = Position.Y;
+        LookAt(playerPos, Vector3.Up);
     }
 }

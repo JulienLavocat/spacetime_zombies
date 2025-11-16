@@ -12,17 +12,17 @@ namespace SpacetimeDB.Types
 {
     public sealed partial class RemoteReducers : RemoteBase
     {
-        public delegate void DummyHandler(ReducerEventContext ctx, ExternalNavMesh en);
-        public event DummyHandler? OnDummy;
+        public delegate void GenerateExternalNavmeshHandler(ReducerEventContext ctx, ExternalNavMesh en);
+        public event GenerateExternalNavmeshHandler? OnGenerateExternalNavmesh;
 
-        public void Dummy(ExternalNavMesh en)
+        public void GenerateExternalNavmesh(ExternalNavMesh en)
         {
-            conn.InternalCallReducer(new Reducer.Dummy(en), this.SetCallReducerFlags.DummyFlags);
+            conn.InternalCallReducer(new Reducer.GenerateExternalNavmesh(en), this.SetCallReducerFlags.GenerateExternalNavmeshFlags);
         }
 
-        public bool InvokeDummy(ReducerEventContext ctx, Reducer.Dummy args)
+        public bool InvokeGenerateExternalNavmesh(ReducerEventContext ctx, Reducer.GenerateExternalNavmesh args)
         {
-            if (OnDummy == null)
+            if (OnGenerateExternalNavmesh == null)
             {
                 if (InternalOnUnhandledReducerError != null)
                 {
@@ -34,7 +34,7 @@ namespace SpacetimeDB.Types
                 }
                 return false;
             }
-            OnDummy(
+            OnGenerateExternalNavmesh(
                 ctx,
                 args.En
             );
@@ -46,28 +46,28 @@ namespace SpacetimeDB.Types
     {
         [SpacetimeDB.Type]
         [DataContract]
-        public sealed partial class Dummy : Reducer, IReducerArgs
+        public sealed partial class GenerateExternalNavmesh : Reducer, IReducerArgs
         {
             [DataMember(Name = "_en")]
             public ExternalNavMesh En;
 
-            public Dummy(ExternalNavMesh En)
+            public GenerateExternalNavmesh(ExternalNavMesh En)
             {
                 this.En = En;
             }
 
-            public Dummy()
+            public GenerateExternalNavmesh()
             {
                 this.En = new();
             }
 
-            string IReducerArgs.ReducerName => "dummy";
+            string IReducerArgs.ReducerName => "generate_external_navmesh";
         }
     }
 
     public sealed partial class SetReducerFlags
     {
-        internal CallReducerFlags DummyFlags;
-        public void Dummy(CallReducerFlags flags) => DummyFlags = flags;
+        internal CallReducerFlags GenerateExternalNavmeshFlags;
+        public void GenerateExternalNavmesh(CallReducerFlags flags) => GenerateExternalNavmeshFlags = flags;
     }
 }

@@ -24,10 +24,16 @@ namespace SpacetimeDB.Types
         public RemoteTables(DbConnection conn)
         {
             AddTable(Player = new(conn));
-            AddTable(StengArchipelagoData = new(conn));
+            AddTable(SpitterAoe = new(conn));
+            AddTable(SpitterZombie = new(conn));
+            AddTable(SpitterZombieUpdateTick = new(conn));
             AddTable(StengBehaviorTree = new(conn));
+            AddTable(StengColliders = new(conn));
             AddTable(StengNavigationAgent = new(conn));
             AddTable(StengNavmesh = new(conn));
+            AddTable(StengRaycasts = new(conn));
+            AddTable(StengRigidBodies = new(conn));
+            AddTable(StengTriggers = new(conn));
             AddTable(StengWorld = new(conn));
             AddTable(WorldTick = new(conn));
             AddTable(Zombie = new(conn));
@@ -477,12 +483,14 @@ namespace SpacetimeDB.Types
             var encodedArgs = update.ReducerCall.Args;
             return update.ReducerCall.ReducerName switch
             {
-                "dummy" => BSATNHelpers.Decode<Reducer.Dummy>(encodedArgs),
                 "editor_upload_navmesh" => BSATNHelpers.Decode<Reducer.EditorUploadNavmesh>(encodedArgs),
+                "generate_external_navmesh" => BSATNHelpers.Decode<Reducer.GenerateExternalNavmesh>(encodedArgs),
                 "on_disconnect" => BSATNHelpers.Decode<Reducer.OnDisconnect>(encodedArgs),
                 "player_ready" => BSATNHelpers.Decode<Reducer.PlayerReady>(encodedArgs),
                 "player_update_position" => BSATNHelpers.Decode<Reducer.PlayerUpdatePosition>(encodedArgs),
                 "spawn_zombies" => BSATNHelpers.Decode<Reducer.SpawnZombies>(encodedArgs),
+                "tick_spitter_aoe" => BSATNHelpers.Decode<Reducer.TickSpitterAoe>(encodedArgs),
+                "tick_spitter_zombie" => BSATNHelpers.Decode<Reducer.TickSpitterZombie>(encodedArgs),
                 "tick_world" => BSATNHelpers.Decode<Reducer.TickWorld>(encodedArgs),
                 "tick_zombie" => BSATNHelpers.Decode<Reducer.TickZombie>(encodedArgs),
                 "" => throw new SpacetimeDBEmptyReducerNameException("Reducer name is empty"),
@@ -507,12 +515,14 @@ namespace SpacetimeDB.Types
             var eventContext = (ReducerEventContext)context;
             return reducer switch
             {
-                Reducer.Dummy args => Reducers.InvokeDummy(eventContext, args),
                 Reducer.EditorUploadNavmesh args => Reducers.InvokeEditorUploadNavmesh(eventContext, args),
+                Reducer.GenerateExternalNavmesh args => Reducers.InvokeGenerateExternalNavmesh(eventContext, args),
                 Reducer.OnDisconnect args => Reducers.InvokeOnDisconnect(eventContext, args),
                 Reducer.PlayerReady args => Reducers.InvokePlayerReady(eventContext, args),
                 Reducer.PlayerUpdatePosition args => Reducers.InvokePlayerUpdatePosition(eventContext, args),
                 Reducer.SpawnZombies args => Reducers.InvokeSpawnZombies(eventContext, args),
+                Reducer.TickSpitterAoe args => Reducers.InvokeTickSpitterAoe(eventContext, args),
+                Reducer.TickSpitterZombie args => Reducers.InvokeTickSpitterZombie(eventContext, args),
                 Reducer.TickWorld args => Reducers.InvokeTickWorld(eventContext, args),
                 Reducer.TickZombie args => Reducers.InvokeTickZombie(eventContext, args),
                 _ => throw new ArgumentOutOfRangeException("Reducer", $"Unknown reducer {reducer}")
