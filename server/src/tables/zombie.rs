@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use spacetime_engine::{
     math::Vec3,
-    navigation::{NavigationAgent, NavigationAgentId, TargetReachedCondition},
+    navigation::{DestinationReachedCondition, NavigationAgent, NavigationAgentId},
     utils::{Entity, WorldEntity},
 };
 use spacetimedb::{table, ReducerContext, Table, Timestamp};
@@ -76,11 +76,11 @@ impl Zombie {
             .desired_speed(3.0)
             .max_speed(5.0)
             .radius(0.3)
-            .target_reached_condition(TargetReachedCondition::Distance(Some(1.5)))
+            .target_reached_condition(DestinationReachedCondition::Distance(Some(1.5)))
             .position(position)
             .build()
             .insert(ctx)
-            .id;
+            .id();
 
         Zombie {
             id: 0,

@@ -2,7 +2,7 @@ use crate::constants::WORLD_ID;
 use serde::{Deserialize, Serialize};
 use spacetime_engine::{
     behavior::{tick_behavior, Action, BehaviorExecutor, BehaviorTree, Select, Sequence, Status},
-    navigation::{NavigationAgent, NavigationState},
+    navigation::NavigationAgent,
     utils::{Entity, WorldEntity},
     world::World,
 };
@@ -32,14 +32,20 @@ impl BehaviorExecutor<ZombieAction> for Zombie {
         let mut agent = NavigationAgent::find(ctx, self.navigation_agent_id)
             .expect("NavigationAgent not found");
         match action {
-            ZombieAction::IsMoving => match agent.state == NavigationState::Moving {
-                true => Status::Success,
-                false => Status::Failure,
-            },
-            ZombieAction::IsTargetReached => match agent.state == NavigationState::ReachedTarget {
-                true => Status::Success,
-                false => Status::Failure,
-            },
+            ZombieAction::IsMoving => {
+                if agent.is_moving() {
+                    Status::Success
+                } else {
+                    Status::Failure
+                }
+            }
+            ZombieAction::IsTargetReached => {
+                if agent.has_reached_destination() {
+                    Status::Success
+                } else {
+                    Status::Failure
+                }
+            }
             ZombieAction::TargetRandomPlayer => {
                 let players = Player::as_vec(ctx);
                 if players.is_empty() {
@@ -48,8 +54,9 @@ impl BehaviorExecutor<ZombieAction> for Zombie {
 
                 let target = players.choose(&mut ctx.rng()).unwrap();
 
-                agent.paused = false;
-                agent.current_target = Some(target.position);
+                agent
+                    .set_destination(Some(target.position))
+                    .set_paused(false);
                 agent.update(ctx);
 
                 self.target_player = Some(target.id);
@@ -59,7 +66,9 @@ impl BehaviorExecutor<ZombieAction> for Zombie {
             }
             ZombieAction::Chase => {
                 if let Some(player) = Player::find(ctx, self.target_player.unwrap()) {
-                    agent.current_target = Some(player.position);
+                    agent
+                        .set_destination(Some(player.position))
+                        .set_paused(false);
                     agent.update(ctx);
                     return Status::Success;
                 }
@@ -82,7 +91,7 @@ impl BehaviorExecutor<ZombieAction> for Zombie {
 
                 let player = player.unwrap();
 
-                if player.position.distance(&agent.position) > 1.0 {
+                if player.position.distance(&agent.position()) > 1.0 {
                     self.is_attacking = false;
                     self.clone().update(ctx);
                     return Status::Failure;

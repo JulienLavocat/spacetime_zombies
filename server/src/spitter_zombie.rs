@@ -5,7 +5,7 @@ use spacetime_engine::{
     behavior::{tick_behavior, Action, BehaviorExecutor, BehaviorTree, Select, Sequence, Status},
     collisions::{Trigger, TriggerId},
     math::Vec3,
-    navigation::{NavigationAgent, NavigationState, TargetReachedCondition},
+    navigation::{DestinationReachedCondition, NavigationAgent},
     utils::{get_delta_time, Entity, WorldEntity},
     world::World,
 };
@@ -91,13 +91,13 @@ impl SpitterZombie {
             .desired_speed(3.0)
             .max_speed(5.0)
             .radius(0.3)
-            .target_reached_condition(TargetReachedCondition::Distance(Some(
+            .target_reached_condition(DestinationReachedCondition::Distance(Some(
                 SPLITTER_ZOMBIE_ATTACK_RANGE,
             )))
             .position(position)
             .build()
             .insert(ctx)
-            .id;
+            .id();
         ctx.db.spitter_zombie().insert(SpitterZombie {
             id: 0,
             navigation_agent_id,
@@ -212,16 +212,14 @@ impl BehaviorExecutor<SpitterZombieAction> for SpitterZombie {
         let mut agent = NavigationAgent::find(ctx, self.navigation_agent_id)
             .expect("NavigationAgent not found");
         match action {
-            SpitterZombieAction::IsMoving => match agent.state == NavigationState::Moving {
+            SpitterZombieAction::IsMoving => match agent.is_moving() {
                 true => Status::Success,
                 false => Status::Failure,
             },
-            SpitterZombieAction::IsTargetReached => {
-                match agent.state == NavigationState::ReachedTarget {
-                    true => Status::Success,
-                    false => Status::Failure,
-                }
-            }
+            SpitterZombieAction::IsTargetReached => match agent.has_reached_destination() {
+                true => Status::Success,
+                false => Status::Failure,
+            },
             SpitterZombieAction::TargetRandomPlayer => {
                 let players = Player::as_vec(ctx);
                 if players.is_empty() {
@@ -230,8 +228,9 @@ impl BehaviorExecutor<SpitterZombieAction> for SpitterZombie {
 
                 let target = players.choose(&mut ctx.rng()).unwrap();
 
-                agent.paused = false;
-                agent.current_target = Some(target.position);
+                agent
+                    .set_paused(false)
+                    .set_destination(Some(target.position));
                 agent.update(ctx);
 
                 self.target_player = Some(target.id);
@@ -241,7 +240,9 @@ impl BehaviorExecutor<SpitterZombieAction> for SpitterZombie {
             }
             SpitterZombieAction::Chase => {
                 if let Some(player) = Player::find(ctx, self.target_player.unwrap()) {
-                    agent.current_target = Some(player.position);
+                    agent
+                        .set_destination(Some(player.position))
+                        .set_paused(false);
                     agent.update(ctx);
                     return Status::Success;
                 }
@@ -264,7 +265,7 @@ impl BehaviorExecutor<SpitterZombieAction> for SpitterZombie {
 
                 let player = player.unwrap();
 
-                if player.position.distance(&agent.position) > SPLITTER_ZOMBIE_ATTACK_RANGE {
+                if player.position.distance(&agent.position()) > SPLITTER_ZOMBIE_ATTACK_RANGE {
                     self.is_attacking = false;
                     self.clone().update(ctx);
                     return Status::Failure;

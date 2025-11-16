@@ -36,14 +36,14 @@ pub fn tick_world(ctx: &ReducerContext, tick: WorldTick) {
 
     for mut zombie in Zombie::iter(ctx) {
         if let Some(agent) = agents.get(&zombie.navigation_agent_id) {
-            zombie.position = agent.position;
+            zombie.position = agent.position();
             zombie.update(ctx);
         }
     }
 
     for mut spitter_zombie in SpitterZombie::iter(ctx) {
         if let Some(agent) = agents.get(&spitter_zombie.navigation_agent_id) {
-            spitter_zombie.position = agent.position;
+            spitter_zombie.position = agent.position();
             spitter_zombie.update(ctx);
         }
     }
